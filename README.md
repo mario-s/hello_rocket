@@ -1,4 +1,4 @@
-# hello-rocket
+# hello_rocket
 
 This repository hosts my pet project about how to use the [Rocket Framework](https://rocket.rs/).
 

@@ -1,18 +1,9 @@
 #[macro_use] extern crate rocket;
 
-use rocket_okapi::{openapi, openapi_get_routes, rapidoc::*, swagger_ui::*};
+use hello_rocket::api::*;
+use rocket_okapi::{openapi_get_routes, rapidoc::*, swagger_ui::*};
 use rocket_okapi::settings::UrlObject;
 
-/// Sends a greeting to the user. The name is optional.
-#[openapi(tag = "greeting", operation_id = "1")]
-#[get("/greet?<name>")]
-//if we don't use an option here the argument is required
-fn greet(name: Option<String>) -> String {
-    match name {
-        Some(n) => format!("Hello {n}!"),
-        _ => String::from("Hello World!")
-    }
-}
 
 #[launch]
 fn rocket() -> _ {
