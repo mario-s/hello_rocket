@@ -1,0 +1,10 @@
+appenders:
+  console:
+    kind: console
+    encoder:
+      pattern: "{d} - {l} - {m}{n}"
+
+root:
+  level: debug
+  appenders:
+    - console

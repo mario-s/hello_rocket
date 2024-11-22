@@ -1,3 +1,5 @@
+use log::info;
+
 use std::path::PathBuf;
 
 use rocket_okapi::openapi;
@@ -42,11 +44,13 @@ fn mine_type(path: &PathBuf) -> ContentType {
 }
 
 /// Stores an uploaded file and returns the ID of that file to the client.
+/// Maximum allowed file size is 3 MB.
 #[openapi(tag = "document", operation_id = "2")]
 #[post("/doc", data = "<document>")]
 pub async fn upload(document: Data<'_>) -> std::io::Result<String> {
     let id = DocId::new(ID_LENGTH);
-    document.open(128.kibibytes()).into_file(id.file_path()).await?;
+    info!("id: {}", id);
+    document.open(3.megabytes()).into_file(id.file_path()).await?;
 
     Ok(id.to_string())
 }

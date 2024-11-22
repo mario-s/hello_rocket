@@ -7,6 +7,8 @@ use rocket_okapi::settings::UrlObject;
 
 #[launch]
 fn rocket() -> _ {
+    log4rs::init_file("log4rs.yaml", Default::default()).unwrap();
+
     rocket::build()
         .mount("/", openapi_get_routes![greet, retrieve, upload])
         .mount("/swagger/",
