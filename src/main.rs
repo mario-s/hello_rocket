@@ -8,7 +8,7 @@ use rocket_okapi::settings::UrlObject;
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", openapi_get_routes![greet])
+        .mount("/", openapi_get_routes![greet, retrieve, upload])
         .mount("/swagger/",
             make_swagger_ui(&SwaggerUIConfig {
                 url: "../openapi.json".to_owned(),
