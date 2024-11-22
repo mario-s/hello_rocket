@@ -1,4 +1,4 @@
-use log::info;
+use log::{info, warn};
 
 use std::path::PathBuf;
 
@@ -6,9 +6,10 @@ use rocket_okapi::openapi;
 use rocket::{get, post};
 use rocket::http::ContentType;
 use rocket::tokio::fs::File;
-use rocket::data::{Data, ToByteUnit};
+use rocket::form::Form;
 
 use crate::doc_id::DocId;
+use crate::upload::UploadFile;
 
 // In a real application, these would be retrieved dynamically from a config.
 const ID_LENGTH: usize = 6;
@@ -45,12 +46,17 @@ fn mine_type(path: &PathBuf) -> ContentType {
 
 /// Stores an uploaded file and returns the ID of that file to the client.
 /// Maximum allowed file size is 3 MB.
-#[openapi(tag = "document", operation_id = "2")]
-#[post("/doc", data = "<document>")]
-pub async fn upload(document: Data<'_>) -> std::io::Result<String> {
+#[openapi(tag = "document", operation_id = "2", ignore="upload")]
+#[post("/doc", data = "<upload>")]
+pub async fn upload(upload: Form<UploadFile>) -> std::io::Result<String> {
     let id = DocId::new(ID_LENGTH);
-    info!("id: {}", id);
-    document.open(3.megabytes()).into_file(id.file_path()).await?;
+    let name = upload.orig_file_name();
+    match name {
+       Some(n) => info!("filename: {}", n),
+       None => warn!("no filename")
+    };
+
+    upload.save_as(id.file_path()).await?;
 
     Ok(id.to_string())
 }
